@@ -7,8 +7,7 @@ class SMap extends React.Component {
         super();
         
         this.state = {
-            /*center: [33.5084801,-86.8006611],*/
-            center: [33.177885708504988,-86.827013146666374],
+            center: [33.5084801,-86.8006611],
             zoom: 13
         };
     }

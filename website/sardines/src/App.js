@@ -14,7 +14,15 @@ class App extends Component {
             cities: [
                 {name: 'Paris', density: 21603},
                 {name: 'Manhattan', density: 18903},
+                {name: 'London', density: 5164},
+                {name: 'Chicago', density: 4614},
+                {name: 'Munich', density: 4700},
                 {name: 'Copenhagen', density: 2052},
+                {name: 'Amsterdam', density: 3320},
+                {name: 'Austin, TX', density: 1208},
+                {name: 'Birmingham, AL', density: 562},
+                {name: 'Nasvhille, TN', density: 512},
+                {name: 'Atlanta, GA', density: 1345},
             ],
             population: {city: 212461,
                          metro: 1200000
