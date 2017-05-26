@@ -1,8 +1,10 @@
 ## Sardines
 
 (C) 2017 - Marcus Dillavou <marcus.dillavou@line72.net>
+```
 https://line72.net
 https://github.com/line72/sardines
+```
 
 This is a simple react app for viewing the Birmingham population based on other cities densities.
 
