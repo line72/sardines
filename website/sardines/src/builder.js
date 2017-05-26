@@ -123,7 +123,27 @@ class Builder {
                 //  the coordinates. The 7th coordinate (index 6) is always
                 //  a duplicate of the 1st coordinate (index 0), so we skip
                 //  it, and drop back to the beginning.
-                for (let i = startingIndex; i < startingIndex + 6; i++) {
+                // we need to decide if we want to go counter-clockwise, or
+                //  clockwise. Try counter, if the starting point isn't a boundary
+                //  then try clockwise
+                let k = this.roundKey(n["geometry"]["coordinates"][0][startingIndex % 6])
+
+                let start = 0;
+                let end = 0;
+                let inc = 1;
+                
+                if (pointToFeatures[k].length <= 2) { // counter
+                    start = startingIndex;
+                    end = start + 6;
+                    inc = 1;
+                } else { // clockwise
+                    console.log('going clockwise!!');
+                    start = startingIndex - 2;
+                    end = start - 6;
+                    inc = -1;
+                }
+                
+                for (let i = start; i < end; i += inc) {
                     let c = n["geometry"]["coordinates"][0][i % 6];
                     let key = this.roundKey(c);
 
@@ -211,11 +231,9 @@ class Builder {
 
     buildGeoJSON(boundaries) {
         return boundaries.filter((boundary) => {
-            console.log('filtering boundary? ' + boundary.length);
             // needs to be at least 2 hexes big
             return boundary.length > 10
         }).map((boundary) => {
-            console.log('mapping boundary: ' + boundary);
             return {type: "Feature",
                     properties: {
                         priority: 0
