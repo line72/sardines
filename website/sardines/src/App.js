@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import SMap from './smap';
 import CityList from './citylist';
+import Overlay from './overlay';
 
 import './App.css';
 import 'leaflet/dist/leaflet.css';
@@ -48,6 +49,8 @@ class App extends Component {
         console.log("city was clicked " + city.name + " " + city.density);
         console.log("using birmingham population: " + this.getPopulation());
 
+        this.setState({currentCity: city.name});
+
         if (this.geojson != null) {
             console.log('already have geojson');
             this.doBuild(city, this.geojson, this.getPopulation(), city.density);
@@ -62,6 +65,7 @@ class App extends Component {
                     this.doBuild(city, this.geojson, this.getPopulation(), city.density);
                 });
         }
+
     }
 
     doBuild(city, geojson, population) {
@@ -105,6 +109,7 @@ class App extends Component {
               </div>
               <div className="main">
                 <SMap features={this.state.features} city={this.state.currentCity} />
+                <Overlay visible={this.state.loading} />
               </div>
               <div className="navBar">
                 <CityList cities={this.state.cities} onClick={(city) => this.handleCityClick(city)}/>

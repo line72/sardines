@@ -52,3 +52,25 @@ ul li {
 .city:hover {
     text-decoration: underline;
 }
+
+.loadingScreen {
+    position: relative;
+}
+
+.loading {
+    position: fixed;
+    left: 25px;
+    top: 120px;
+    width: 80%;
+    height: 100%;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.loadingGif {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    left: 50%;
+    top: 50%;
+}
