@@ -1,6 +1,7 @@
 import React from 'react';
 import { Map, TileLayer } from 'react-leaflet';
 import Density from './density';
+import Boundary from './boundary';
 
 class SMap extends React.Component {
     constructor() {
@@ -39,6 +40,7 @@ class SMap extends React.Component {
                     url={this.state.tile.url}
                     subdomains={this.state.tile.subdomains}
                     />
+		  <Boundary useMetroPopulation={false}/>
                   {this.props.features != null && 
                   <Density features={this.props.features} name={this.props.city} />}
                 </Map>
