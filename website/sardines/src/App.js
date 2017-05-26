@@ -24,6 +24,7 @@ class App extends Component {
                 {name: 'Nasvhille, TN', density: 512},
                 {name: 'Atlanta, GA', density: 1345},
             ],
+            currentCity: null,
             population: {city: 212461,
                          metro: 1200000
                         },
@@ -48,6 +49,7 @@ class App extends Component {
         // do a build
         this.state.builder.build(this.getPopulation(), city.density, (features) => {
             this.setState({
+                currentCity: city.name,
                 features: features
             });
         });
@@ -56,7 +58,7 @@ class App extends Component {
     render() {
         return (
             <div className="App">
-              <SMap features={this.state.features} />
+              <SMap features={this.state.features} city={this.state.currentCity} />
               <CityList cities={this.state.cities} onClick={(city) => this.handleCityClick(city)}/>
             </div>
         );

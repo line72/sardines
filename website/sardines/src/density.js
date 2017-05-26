@@ -21,7 +21,7 @@ class Density extends React.Component {
 	    };
 
             return (
-                <GeoJSON key={step} data={feature} style={myStyle} />
+                <GeoJSON key={this.props.name+step} data={feature} style={myStyle} />
             );
         });
         

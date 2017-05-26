@@ -69,11 +69,9 @@ class Builder {
                 let coord = this.roundKey(result["geometry"]["coordinates"][0][j]);
                 if (coord in pointToFeatures) {
                     if (pointToFeatures[coord].indexOf(result) === -1) {
-                        //console.log('updating pointCount ' + coord + ' with ' + result + ': ' + pointToFeatures[coord].length);
                         pointToFeatures[coord].push(result);
                     }
                 } else {
-                    //console.log('new coord ' + coord);
                     pointToFeatures[coord] = [result];
                 }
             }
@@ -82,12 +80,10 @@ class Builder {
         // filter out any results that
         //  don't have any edges
         let filteredResults = results.filter((r) => {
-            //console.log('filtering ' + r);
             for (let i in r["geometry"]["coordinates"][0]) {
                 let c = r["geometry"]["coordinates"][0][i];
                 let key = this.roundKey(c);
 
-                //console.log(pointToFeatures[c].length);
                 if (pointToFeatures[key].length <= 2) {
                     // found an edge
                     return true;
@@ -102,7 +98,6 @@ class Builder {
         let boundaries = []
         // now walk the filtered results, to find a boundary
         while (filteredResults.length > 0) {
-            console.log('starting new boundary: ' + filteredResults.length);
             let boundary = []
             let startingKey = null;
             
@@ -116,7 +111,6 @@ class Builder {
             while (toVisit.length > 0) {
                 // pop this off
                 let [n, startingIndex] = toVisit.pop();
-                console.log('visiting ' + n + ' at index ' + startingIndex);
                 
                 // remove from our filteredResults
                 let index = filteredResults.indexOf(n);
@@ -134,7 +128,6 @@ class Builder {
                     let key = this.roundKey(c);
 
                     if (key === startingKey) {
-                        console.log('finished this boundary');
                         break;
                     }
                     
@@ -179,12 +172,11 @@ class Builder {
         }
 
         console.log('found boundaries=' + boundaries.length);
-        //console.log('boundaries=' + boundaries);
         console.log('filteredResults=' + filteredResults.length);
 
         // generate the GeoJSON geometry based on the boundaries
         let geoJSON = this.buildGeoJSON(boundaries);
-        //console.log('geoJSON=' + geoJSON);
+        console.log('geoJSON=' + geoJSON.length);
         
         return geoJSON;
     }
@@ -218,7 +210,12 @@ class Builder {
     }
 
     buildGeoJSON(boundaries) {
-        return boundaries.map((boundary) => {
+        return boundaries.filter((boundary) => {
+            console.log('filtering boundary? ' + boundary.length);
+            // needs to be at least 2 hexes big
+            return boundary.length > 10
+        }).map((boundary) => {
+            console.log('mapping boundary: ' + boundary);
             return {type: "Feature",
                     properties: {
                         priority: 0
