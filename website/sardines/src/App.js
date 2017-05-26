@@ -58,8 +58,16 @@ class App extends Component {
     render() {
         return (
             <div className="App">
-              <SMap features={this.state.features} city={this.state.currentCity} />
-              <CityList cities={this.state.cities} onClick={(city) => this.handleCityClick(city)}/>
+              <div className="header">
+                <h1>If Birmingham Were As Dense As {this.state.currentCity || '...'}</h1>
+                {this.state.currentCity && <h3>then all the residents would have to live in this block</h3>}
+              </div>
+              <div className="main">
+                <SMap features={this.state.features} city={this.state.currentCity} />
+              </div>
+              <div className="navBar">
+                <CityList cities={this.state.cities} onClick={(city) => this.handleCityClick(city)}/>
+              </div>
             </div>
         );
     }

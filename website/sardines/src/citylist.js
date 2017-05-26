@@ -5,7 +5,7 @@ class CityList extends React.Component {
         const cities = this.props.cities.map((city, step) => {
             return (
                 <li key={city.name}>
-                  <a href='#' onClick={() => this.props.onClick(city)}>{city.name}</a>
+                  <button className="city" onClick={() => this.props.onClick(city)}>{city.name}</button>
                 </li>
             );
         });
