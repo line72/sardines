@@ -49,8 +49,6 @@ class App extends Component {
         console.log("city was clicked " + city.name + " " + city.density);
         console.log("using birmingham population: " + this.getPopulation());
 
-        this.setState({currentCity: city.name});
-
         if (this.geojson != null) {
             console.log('already have geojson');
             this.doBuild(city, this.geojson, this.getPopulation(), city.density);
