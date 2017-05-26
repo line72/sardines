@@ -1,0 +1,76 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+.leaflet-container {
+    height: 800px;
+    width: 100%;
+}
+
+.header {
+    /* height: 25px; */
+}
+
+.main {
+    position: absolute;
+    left: 25px;
+    top: 120px;
+    width: 80%;
+    height: 80%;
+}
+
+.navBar {
+    position: absolute;
+    top: 120px;
+    right: 5px;
+    width: 20%;
+    height: 80%;
+}
+
+ul {
+    list-style-type: none;
+    text-align: left;
+}
+
+ul li {
+    weight: bold;
+    margin: 25px;
+}
+
+.city {
+    background: #fff;
+    border: 0px solid #999;
+    font-size: 24px;
+    font-weight: bold;
+    margin-right: -1px;
+    margin-top: -1px;
+    padding: 0;
+    cursor: pointer;
+}
+.city:hover {
+    text-decoration: underline;
+}
+
+.loadingScreen {
+    position: relative;
+}
+
+.loading {
+    position: fixed;
+    left: 25px;
+    top: 120px;
+    width: 80%;
+    height: 100%;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.loadingGif {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    left: 50%;
+    top: 50%;
+}
