@@ -1,15 +1,16 @@
 import React, { Component } from 'react';
 import SMap from './smap';
 import CityList from './citylist';
-import Builder from './builder';
 
 import './App.css';
 import 'leaflet/dist/leaflet.css';
+import axios from 'axios';
 
 class App extends Component {
     constructor() {
         super();
 
+        this.worker = null;
         this.state = {
             cities: [
                 {name: 'Paris', density: 21603},
@@ -30,7 +31,8 @@ class App extends Component {
                         },
             useMetroPopulation: false,
             features: null,
-            builder: new Builder(),
+            geojson: null,
+            loading: false,
         }
     }
 
@@ -46,12 +48,51 @@ class App extends Component {
         console.log("city was clicked " + city.name + " " + city.density);
         console.log("using birmingham population: " + this.getPopulation());
 
-        // do a build
-        this.state.builder.build(this.getPopulation(), city.density, (features) => {
+        if (this.geojson != null) {
+            console.log('already have geojson');
+            this.doBuild(city, this.geojson, this.getPopulation(), city.density);
+        } else {
+            console.log('fetching geojson');
+            // fetch first
+            axios.get('/birmingham-hexgrid-with-priorities.geojson')
+                .then((response) => {
+                    console.log('fetch data ' + response);
+                    this.geojson = response.data.features;
+
+                    this.doBuild(city, this.geojson, this.getPopulation(), city.density);
+                });
+        }
+    }
+
+    doBuild(city, geojson, population) {
+        // if we don't have a webworker, create one
+        if (this.worker != null) {
+            console.log('terminating old worker');
+            this.worker.terminate();
+            this.worker = null;
+        }
+        this.worker = new Worker("./builder.js");
+
+        this.worker.onmessage = (e) =>  {
+            console.log('received results for ' + e.data.city.name);
             this.setState({
-                currentCity: city.name,
-                features: features
+                currentCity: e.data.city.name,
+                features: e.data.results,
+                loading: false,
             });
+
+            this.worker.terminate();
+        };
+
+        // send a message to the worker, asking
+        //  them to build the new city
+        this.worker.postMessage({city: city,
+                                 geojson: geojson,
+                                 population: population,
+                                 density: city.density});
+
+        this.setState({
+            loading: true
         });
     }
     

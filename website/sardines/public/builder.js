@@ -1,66 +1,44 @@
-import axios from 'axios';
-
 class Builder {
     constructor() {
-        this.geojson = null;
     }
 
-    build(population, density, callback) {
-        if (this.geojson != null) {
-            console.log('already have geojson');
-            let r = this.doBuild(this.geojson, population, density);
-            callback(r);
-        } else {
-            console.log('fetching geojson');
-            // fetch first
-            axios.get('/birmingham-hexgrid-with-priorities.geojson')
-                .then((response) => {
-                    console.log('fetch data ' + response);
-                    this.geojson = response.data.features;
-                    
-                    let r = this.doBuild(this.geojson, population, density);
-                    callback(r);
-                });
-        }
-    }
-
-    doBuild(features, population, density) {
+    build(features, population, density) {
         const areaPerHex = 0.025980762;
-	const peoplePerHex = 1.0 / areaPerHex;
-
-	const densityPerHex = density / peoplePerHex;
-	
-	const desired = population / densityPerHex;
-	let count = 0;
+        const peoplePerHex = 1.0 / areaPerHex;
+        
+        const densityPerHex = density / peoplePerHex;
+        
+        const desired = population / densityPerHex;
+        let count = 0;
 
         features.sort(function(a, b) {
             // !mwd - todo, if priority is the same
-	    //  sort by the closest to the city center.
-	    
-	    if (a.properties.priority == null) {
-		return 1;
-	    } else if (b.properties.priority == null) {
-		return -1;
-	    } else {
-		return a.properties.priority - b.properties.priority;
-	    }
-	});
-
+            //  sort by the closest to the city center.
+            
+            if (a.properties.priority == null) {
+                return 1;
+            } else if (b.properties.priority == null) {
+                return -1;
+            } else {
+                return a.properties.priority - b.properties.priority;
+            }
+        });
+        
         let results = [];
         for (let key in features) {
-	    var feature = features[key];
-	    //console.log("feature = " + feature);
-	    //if (count < desired && feature.properties.priority == 1) {
-	    if (count < desired) {
-		count += 1;
-
+            var feature = features[key];
+            //console.log("feature = " + feature);
+            //if (count < desired && feature.properties.priority == 1) {
+            if (count < desired) {
+                count += 1;
+                
                 results.push(feature);
-	    }
-	}
-
+            }
+        }
+        
         // now just find a boundary to create a single
         //  representation
-
+        
         // create a list of all the points and their count
         let pointToFeatures = {};
         for (let i in results) {
@@ -76,14 +54,14 @@ class Builder {
                 }
             }
         }
-
+        
         // filter out any results that
         //  don't have any edges
         let filteredResults = results.filter((r) => {
             for (let i in r["geometry"]["coordinates"][0]) {
                 let c = r["geometry"]["coordinates"][0][i];
                 let key = this.roundKey(c);
-
+                
                 if (pointToFeatures[key].length <= 2) {
                     // found an edge
                     return true;
@@ -91,7 +69,7 @@ class Builder {
             }
             return false;
         });
-
+        
         console.log('all results = ' + results.length);
         console.log('filtered results = ' + filteredResults.length);
 
@@ -247,4 +225,12 @@ class Builder {
     }
 }
 
-export default Builder;
+onmessage = function(e) {
+    console.log('building results for ' + e.data.city.name);
+    let builder = new Builder();
+    let results = builder.build(e.data.geojson, e.data.population, e.data.density);
+
+    console.log('finished results for ' + e.data.city.name);
+    postMessage({city: e.data.city,
+                 results: results});
+}
