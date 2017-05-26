@@ -11,7 +11,7 @@ This is a simple react app for viewing the Birmingham population based on other 
 To run this:
 
 (from this directory)
-- npm install react react-leaflet axios
+- npm install react react-scripts react-dom leaflet react-leaflet axios
 - npm start
 
 (or for making a release)
