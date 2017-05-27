@@ -16,15 +16,20 @@ class App extends Component {
             cities: [
                 {name: 'Paris', density: 21603},
                 {name: 'Manhattan', density: 18903},
+                {name: 'San Francisco', density: 7124},
+                {name: 'Tokyo', density: 6225},
+                {name: 'Boston', density: 5335},
                 {name: 'London', density: 5164},
-                {name: 'Chicago', density: 4614},
                 {name: 'Munich', density: 4700},
-                {name: 'Copenhagen', density: 2052},
+                {name: 'Chicago', density: 4614},
                 {name: 'Amsterdam', density: 3320},
-                {name: 'Austin, TX', density: 1208},
-                {name: 'Birmingham, AL', density: 562},
-                {name: 'Nasvhille, TN', density: 512},
+                {name: 'Los Angeles, CA', density: 3272},
+                {name: 'Copenhagen', density: 2052},
+                {name: 'Dallas, TX', density: 1474},
                 {name: 'Atlanta, GA', density: 1345},
+                {name: 'Austin, TX', density: 1208},
+                // {name: 'Birmingham, AL', density: 562},
+                // {name: 'Nasvhille, TN', density: 512},
             ],
             currentCity: null,
             population: {city: 212461,
@@ -48,6 +53,10 @@ class App extends Component {
     handleCityClick(city) {
         console.log("city was clicked " + city.name + " " + city.density);
         console.log("using birmingham population: " + this.getPopulation());
+
+        this.setState({
+            loading: true
+        });
 
         if (this.geojson != null) {
             console.log('already have geojson');
@@ -93,9 +102,6 @@ class App extends Component {
                                  population: population,
                                  density: city.density});
 
-        this.setState({
-            loading: true
-        });
     }
     
     render() {
@@ -104,6 +110,7 @@ class App extends Component {
               <div className="header">
                 <h1>If Birmingham Were As Dense As {this.state.currentCity || '...'}</h1>
                 {this.state.currentCity && <h3>then all the residents would have to live in this block</h3>}
+		<span className="info">Birmingham city has a population of <b>212,461</b> and a density of <b>562</b> people/km<sup>2</sup></span>
               </div>
               <div className="main">
                 <SMap features={this.state.features} city={this.state.currentCity} />
