@@ -6,6 +6,7 @@ class CityList extends React.Component {
             return (
                 <li key={city.name}>
                   <button className="city" onClick={() => this.props.onClick(city)}>{city.name}</button>
+		  <br /><span className="city-subtext"><b>{city.density}</b> people/km<sup>2</sup></span>
                 </li>
             );
         });

@@ -4,8 +4,13 @@ body {
   font-family: sans-serif;
 }
 
+.map-container {
+    width: 100%;
+    height: 100%;
+}
+
 .leaflet-container {
-    height: 800px;
+    height: 100%;
     width: 100%;
 }
 
@@ -27,6 +32,7 @@ body {
     right: 5px;
     width: 20%;
     height: 80%;
+    overflow: scroll;
 }
 
 ul {
@@ -69,8 +75,24 @@ ul li {
 
 .loadingGif {
     position: absolute;
-    width: 48px;
-    height: 48px;
-    left: 50%;
-    top: 50%;
+    left: 45%;
+    top: 40%;
+    width: 150px;
+}
+
+.info {
+    position: absolute;
+    left: 25px;
+    top: 70px;
+    width: 250px;
+    font-style: italic;
+    font-size: .75em;
+    text-align: justify;
+}
+
+.city-subtext {
+    font-style: italize;
+    font-size: .75em;
+    text-align: justify;
+    margin: 15px;
 }

@@ -31,7 +31,10 @@ class Boundary extends React.Component {
 	const style = {
 	    "color": "#000000",
 	    "stroke": true,
-	    "fillOpacity": 0.0
+	    "fill": true,
+	    "fillOpacity": 0.2,
+	    "fillColor": "#555555",
+	    "weight": 6
 	};
 	let r = '';
 	if (this.props.useMetroPopulation) {

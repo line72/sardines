@@ -35,7 +35,9 @@ class Builder {
                 results.push(feature);
             }
         }
-        
+
+	console.log('count=' + count + ' desired=' + desired);
+	
         // now just find a boundary to create a single
         //  representation
         
