@@ -33,7 +33,8 @@ class SMap extends React.Component {
         const position = this.state.center;
 
         return (
-            <div className="map-container">
+	    <div className="map-container">
+	      <span>hello</span>
                 <Map center={position} zoom={this.state.zoom}>
                   <TileLayer
                     attribution={this.state.tile.attribution}

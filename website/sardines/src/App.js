@@ -4,7 +4,9 @@ import CityList from './citylist';
 import Overlay from './overlay';
 
 import './App.css';
+import './w3.css';
 import 'leaflet/dist/leaflet.css';
+import 'font-awesome/css/font-awesome.min.css';
 import axios from 'axios';
 
 class App extends Component {
@@ -107,18 +109,26 @@ class App extends Component {
     render() {
         return (
             <div className="App">
-              <div className="header">
-                <h1>If Birmingham Were As Dense As {this.state.currentCity || '...'}</h1>
-                {this.state.currentCity && <h3>then all the residents would have to live in this block</h3>}
-		<span className="info">Birmingham city has a population of <b>212,461</b> and a density of <b>562</b> people/km<sup>2</sup></span>
-              </div>
-              <div className="main">
-                <SMap features={this.state.features} city={this.state.currentCity} />
-                <Overlay visible={this.state.loading} />
-              </div>
-              <div className="navBar">
-                <CityList cities={this.state.cities} onClick={(city) => this.handleCityClick(city)}/>
-              </div>
+	      {/* NavBar */}
+	      <CityList cities={this.state.cities}
+			current={this.state.currentCity}
+			onClick={(city) => this.handleCityClick(city)}/>
+		
+		{/* Main Content with Header */}
+		<div className="w3-main sardine-main">
+		  {/* Push content down on small screens */}
+		  <div className="w3-hide-large sardine-header-margin"></div>
+		  
+		  <div className="w3-container w3-xlarge">
+                    <h1>If Birmingham Were As Dense As {this.state.currentCity || '...'}</h1>
+                    {this.state.currentCity && <h3>then all the residents would have to live in this block</h3>}
+		    <span className="info">Birmingham city has a population of <b>212,461</b> and a density of <b>562</b> people/km<sup>2</sup></span>
+		  </div>
+		  <div className="w3-container">
+                    <SMap features={this.state.features} city={this.state.currentCity} />
+                    <Overlay visible={this.state.loading} />
+		  </div>
+		</div>
             </div>
         );
     }
