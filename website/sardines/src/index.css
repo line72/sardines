@@ -2,11 +2,64 @@ body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
+  height: 100%;
+}
+
+.sardine-main {
+    /* shift over for the side bar */
+    margin-left: 250px;
+}
+
+.sardine-header-margin {
+    margin-top: 83px;
+}
+
+.sardine-header {
+    z-index: 10;
+    background-color: rgba(0, 0, 0, 1);
+    color: rgba(255, 255, 255, 1);
+}
+
+.sardine-h1 {
+    font-size: 2.5em;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    z-index: 5000;
+}
+
+.sardine-h3 {
+    font-size: 1.5em;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.sardine-sidebar {
+    width: 250px;
+    z-index: 3000;
+}
+
+.sardine-sidebar-overlay {
+    cursor: pointer;
+    z-index: 2999;
+}
+
+.sardine-bar-item {
+    font-size: .70em;
+}
+
+.sardine-padding-0 {
+    padding-left:0px!important;
+    padding-top:0px!important;
+    padding-bottom:0px!important;
+    padding-right:0px!important;
 }
 
 .map-container {
+    top: 0px;
+    position: absolute;
     width: 100%;
     height: 100%;
+    z-index: -10;
 }
 
 .leaflet-container {
@@ -14,80 +67,11 @@ body {
     width: 100%;
 }
 
-.header {
-    /* height: 25px; */
-}
-
-.main {
-    position: absolute;
-    left: 25px;
-    top: 120px;
-    width: 80%;
-    height: 80%;
-}
-
-.navBar {
-    position: absolute;
-    top: 120px;
-    right: 5px;
-    width: 20%;
-    height: 80%;
-    overflow: scroll;
-}
-
-ul {
-    list-style-type: none;
-    text-align: left;
-}
-
-ul li {
-    weight: bold;
-    margin: 25px;
-}
-
-.city {
-    background: #fff;
-    border: 0px solid #999;
-    font-size: 24px;
-    font-weight: bold;
-    margin-right: -1px;
-    margin-top: -1px;
-    padding: 0;
-    cursor: pointer;
-}
-.city:hover {
-    text-decoration: underline;
-}
-
-.loadingScreen {
-    position: relative;
-}
-
-.loading {
-    position: fixed;
-    left: 25px;
-    top: 120px;
-    width: 80%;
-    height: 100%;
-    z-index: 1000;
-    background: rgba(0, 0, 0, 0.8);
-}
-
-.loadingGif {
-    position: absolute;
-    left: 45%;
-    top: 40%;
-    width: 150px;
-}
-
-.info {
-    position: absolute;
-    left: 25px;
-    top: 70px;
-    width: 250px;
-    font-style: italic;
+.city-birmingham-subtext {
+    font-style: italize;
     font-size: .75em;
     text-align: justify;
+    margin: 0px;
 }
 
 .city-subtext {
