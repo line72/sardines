@@ -49,6 +49,12 @@ class CityList extends React.Component {
 		{/* Close Button */}
 		<div className="w3-container w3-display-container w3-padding-16">
 		  <i onClick={() => this.onClose()} className="fa fa-remove w3-hide-large w3-button w3-display-topright"></i>
+		  <span className="w3-large w3-text-grey sardine-padding-0">
+		    <span className="w3-bar-item sardine-padding-0">Birmingham</span>
+		    <br /><span className="city-birmingham-subtext"><b>212,461</b> people</span>
+		    <br /><span className="city-birmingham-subtext"><b>562</b> people/km<sup>2</sup></span>
+		  </span>
+		  <hr />
 		</div>
 		
 		{/* items */}
@@ -59,6 +65,9 @@ class CityList extends React.Component {
 	      
 	      {/* Top menu on small screens */}
 	      <header className="w3-bar w3-top w3-hide-large w3-black w3-xlarge">
+		<div className="w3-bar-item w3-padding-24 w3-wide sardine-bar-item">
+		  Density of Birmingham
+		</div>
 		<a href="javascript:void(0)" className="w3-bar-item w3-button w3-padding-24 w3-right"
 		   onClick={() => this.onOpen()}>
 		  <i className="fa fa-bars"></i>

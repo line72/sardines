@@ -2,6 +2,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
+  height: 100%;
 }
 
 .sardine-main {
@@ -11,6 +12,24 @@ body {
 
 .sardine-header-margin {
     margin-top: 83px;
+}
+
+.sardine-header {
+    z-index: 10;
+    background-color: rgba(255, 255, 255, 1);
+}
+
+.sardine-h1 {
+    font-size: 2.5em;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    z-index: 5000;
+}
+
+.sardine-h3 {
+    font-size: 1.5em;
+    margin-top: 0px;
+    margin-bottom: 0px;
 }
 
 .sardine-sidebar {
@@ -23,12 +42,25 @@ body {
     z-index: 2999;
 }
 
+.sardine-bar-item {
+    font-size: .70em;
+}
+
+.sardine-padding-0 {
+    padding-left:0px!important;
+    padding-top:0px!important;
+    padding-bottom:0px!important;
+    padding-right:0px!important;
+}
+
 /*******/
 
 .map-container {
+    top: 0px;
     position: absolute;
     width: 100%;
     height: 100%;
+    z-index: -10;
 }
 
 .leaflet-container {
@@ -111,6 +143,13 @@ body {
 /*     font-size: .75em; */
 /*     text-align: justify; */
 /* } */
+
+.city-birmingham-subtext {
+    font-style: italize;
+    font-size: .75em;
+    text-align: justify;
+    margin: 0px;
+}
 
 .city-subtext {
     font-style: italize;

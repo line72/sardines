@@ -117,13 +117,14 @@ class App extends Component {
 		{/* Main Content with Header */}
 		<div className="w3-main sardine-main">
 		  {/* Push content down on small screens */}
-		  <div className="w3-hide-large sardine-header-margin"></div>
-		  
-		  <div className="w3-container w3-xlarge">
-                    <h1>If Birmingham Were As Dense As {this.state.currentCity || '...'}</h1>
-                    {this.state.currentCity && <h3>then all the residents would have to live in this block</h3>}
-		    <span className="info">Birmingham city has a population of <b>212,461</b> and a density of <b>562</b> people/km<sup>2</sup></span>
+		  <div className="w3-hide-large sardine-header-margin">
 		  </div>
+
+		  <div className="w3-hide-medium w3-hide-small sardine-header">
+		    <h1 className="sardine-h1">If Birmingham Were As Dense As {this.state.currentCity || '...'}</h1>
+		    {this.state.currentCity && <h3 className="sardine-h3">then all the residents would have to live in this block</h3>}
+		  </div>
+
 		  <div className="w3-container">
                     <SMap features={this.state.features} city={this.state.currentCity} />
                     <Overlay visible={this.state.loading} />
