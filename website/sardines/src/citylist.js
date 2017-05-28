@@ -19,26 +19,18 @@ class CityList extends React.Component {
     }
     
     render() {
-        // const cities = this.props.cities.map((city, step) => {
-        //     return (
-        //         <li key={city.name}>
-        //           <button className="city" onClick={() => this.props.onClick(city)}>{city.name}</button>
-	// 	  <br /><span className="city-subtext"><b>{city.density}</b> people/km<sup>2</sup></span>
-        //         </li>
-        //     );
-        // });
 	const cities = this.props.cities.map((city, step) => {
 	    let t = ''
 	    if (this.props.current === city.name) {
 		t = <i className="fa fa-caret-right w3-margin-right"></i>;
 	    }
             return (
-                <a href="javascript:void(0)"
+                <button
 		   key={city.name}
 		   className="w3-bar-item w3-button"
 		   onClick={() => this.onClick(city, this.props.onClick)}>{t}{city.name}
 		  <br /><span className="city-subtext"><b>{city.density}</b> people/km<sup>2</sup></span>
-		</a>
+		</button>
             );
         });
 	
@@ -56,6 +48,8 @@ class CityList extends React.Component {
 		  </span>
 		  <hr />
 		</div>
+
+		<span className="w3-text-grey w3-large w3-left w3-container">Compare to the<br /> density of:</span>
 		
 		{/* items */}
 		<div className="w3-padding-64 w3-large w3-text-grey">
@@ -68,10 +62,10 @@ class CityList extends React.Component {
 		<div className="w3-bar-item w3-padding-24 w3-wide sardine-bar-item">
 		  Density of Birmingham
 		</div>
-		<a href="javascript:void(0)" className="w3-bar-item w3-button w3-padding-24 w3-right"
+		<button className="w3-bar-item w3-button w3-padding-24 w3-right"
 		   onClick={() => this.onOpen()}>
 		  <i className="fa fa-bars"></i>
-		</a>
+		</button>
 	      </header>
 
 	      {/* Overlay effect with sidebar */}

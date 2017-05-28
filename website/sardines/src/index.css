@@ -16,7 +16,8 @@ body {
 
 .sardine-header {
     z-index: 10;
-    background-color: rgba(255, 255, 255, 1);
+    background-color: rgba(0, 0, 0, 1);
+    color: rgba(255, 255, 255, 1);
 }
 
 .sardine-h1 {
@@ -53,8 +54,6 @@ body {
     padding-right:0px!important;
 }
 
-/*******/
-
 .map-container {
     top: 0px;
     position: absolute;
@@ -67,82 +66,6 @@ body {
     height: 100%;
     width: 100%;
 }
-
-/* .header { */
-/*     /\* height: 25px; *\/ */
-/* } */
-
-/* .main { */
-/*     position: absolute; */
-/*     /\* left: 25px; *\/ */
-/*     /\* top: 120px; *\/ */
-/*     width: 80%; */
-/*     height: 80%; */
-/* } */
-
-/* .navBar { */
-/*     position: absolute; */
-/*     top: 120px; */
-/*     right: 5px; */
-/*     width: 20%; */
-/*     height: 80%; */
-/*     overflow: scroll; */
-/* } */
-
-/* ul { */
-/*     list-style-type: none; */
-/*     text-align: left; */
-/* } */
-
-/* ul li { */
-/*     weight: bold; */
-/*     margin: 25px; */
-/* } */
-
-/* .city { */
-/*     background: #fff; */
-/*     border: 0px solid #999; */
-/*     font-size: 24px; */
-/*     font-weight: bold; */
-/*     margin-right: -1px; */
-/*     margin-top: -1px; */
-/*     padding: 0; */
-/*     cursor: pointer; */
-/* } */
-/* .city:hover { */
-/*     text-decoration: underline; */
-/* } */
-
-/* .loadingScreen { */
-/*     position: relative; */
-/* } */
-
-/* .loading { */
-/*     position: fixed; */
-/*     left: 25px; */
-/*     top: 120px; */
-/*     width: 80%; */
-/*     height: 100%; */
-/*     z-index: 1000; */
-/*     background: rgba(0, 0, 0, 0.8); */
-/* } */
-
-/* .loadingGif { */
-/*     position: absolute; */
-/*     left: 45%; */
-/*     top: 40%; */
-/*     width: 150px; */
-/* } */
-
-/* .info { */
-/*     position: absolute; */
-/*     left: 25px; */
-/*     top: 70px; */
-/*     width: 250px; */
-/*     font-style: italic; */
-/*     font-size: .75em; */
-/*     text-align: justify; */
-/* } */
 
 .city-birmingham-subtext {
     font-style: italize;
