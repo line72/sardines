@@ -1,5 +1,6 @@
 class Builder {
     constructor() {
+        this.mapCentroid = [-86.806379, 33.513501];
     }
 
     build(features, population, density) {
@@ -21,7 +22,7 @@ class Builder {
         const desired = population / densityPerHex;
         let count = 0;
 
-        features.sort(function(a, b) {
+        features.sort((a, b) => {
             // !mwd - todo, if priority is the same
             //  sort by the closest to the city center.
             
@@ -29,6 +30,15 @@ class Builder {
                 return 1;
             } else if (b.properties.priority == null) {
                 return -1;
+            } else if (a.properties.priority == 100 && a.properties.priority == b.properties.priority) {
+                // !mwd - priority 100 means Birmingham city limits, but
+                //   not truely weighted (only the inner neighborhoods are weighted,
+                //   and 100 is "everything else" in birmingham.
+                //  we might want to remove this, but i didn't want to perform this calculation
+                //   for all weighted areas too, since it is typically unnesseary.
+                let distanceA = this.findDistanceToCenter([a.properties.centroidLongitude, a.properties.centroidLatitude]);
+                let distanceB = this.findDistanceToCenter([b.properties.centroidLongitude, b.properties.centroidLatitude]);
+                return distanceA - distanceB;
             } else {
                 return a.properties.priority - b.properties.priority;
             }
@@ -199,6 +209,15 @@ class Builder {
         return point[0].toFixed(11) + 'x' + point[1].toFixed(11);
     }
 
+    /**
+     * calculate the distance between the polygon
+     * centroid and our map centroid
+     */
+    findDistanceToCenter(centroid) {
+        return Math.sqrt(Math.pow(centroid[0] - this.mapCentroid[0], 2) +
+                         Math.pow(centroid[1] - this.mapCentroid[1], 2));
+    }
+    
     /**
      * Get the other polygon and
      *  find the index of the matching

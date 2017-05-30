@@ -31,7 +31,7 @@ class App extends Component {
                 {name: 'Dallas, TX', density: 1474},
                 {name: 'Atlanta, GA', density: 1345},
                 {name: 'Austin, TX', density: 1208},
-                //{name: 'Birmingham, AL', density: 655}, /* !mwd - my calculated density */
+                {name: 'Birmingham, AL', density: 655}, /* !mwd - my calculated density */
                 //{name: 'Birmingham, AL', density: 562},
                 //{name: 'Nasvhille, TN', density: 512},
             ],
