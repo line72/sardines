@@ -3,6 +3,16 @@ class Builder {
     }
 
     build(features, population, density) {
+        /* In our hex grid, each hex has
+         * a radius (and side length) of
+         * 0.1km. Using the area equation
+         * of a regular hex:
+         *
+         * A = (3*√3*s^2) / 2
+         *
+         * We calculate the area of each
+         * hex to be 0.025980762km^2
+         */
         const areaPerHex = 0.025980762;
         const peoplePerHex = 1.0 / areaPerHex;
         

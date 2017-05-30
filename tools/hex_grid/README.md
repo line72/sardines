@@ -12,15 +12,16 @@ First, I used the build_hex_grid to find the min and max longitude
 
 http://www.nhc.noaa.gov/gccalc.shtml
 
-with a common longitude to compute a distance.
+with a common latitude to compute a distance.
 
-Lat1: 33.469196 N Lon1: 87.042746 W
-Lat2: 33.469196 N Lon2: 86.559762 W
+Lat1: 33.469196 N Lon1: 87 W
+Lat2: 33.469196 N Lon2: 86 W
 
-This gave me a distance of approximately 45km. If you are working with
-a different dataset, please modify the `build_hex_grid.py` and edit
-the `LON_IN_KM` variable. This variable indicates the distance in
-kilometers of our bounding box from east to west.
+This gave me a distance of approximately 93km. If you are working with
+a different dataset that is at a different latitude, please modify the
+`build_hex_grid.py` and edit the `LON_IN_KM` variable. This variable
+indicates the distance in kilometers of 1 unit of longitude at the
+desired latitude.
 
 ## Generating a Hex Grid
 

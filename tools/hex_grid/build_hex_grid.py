@@ -8,12 +8,10 @@ import math
 import geojson
 import geojson_utils
 
-# We need to convert our longitude into km
-# We found that this region is about 45km
-#  east west (see README), and we want
-#  do divide it into a hex grid, with the
-#  radius of each hex grid being 0.1km
-LON_IN_KM=45
+# We need to convert 1 unit of longitude into km
+#  for the latitude of this dataset.
+LON_IN_KM=93
+# Desired radius of each hexgrid in km.
 RADIUS=.1
 
 class HexGrid:
@@ -38,11 +36,9 @@ class HexGrid:
         return ([min_lon[0], min_lat[1]],
                 [max_lon[0], max_lat[1]])
 
-    def calulate_hex_radius(bottom_left, top_right):
-        (x0, x1) = (bottom_left[0], top_right[0])
-
+    def calculate_hex_radius():
         # find our latitude per km
-        in_km = (x1 - x0) / LON_IN_KM
+        in_km = 1.0 / LON_IN_KM
 
         # find our desired step 
         #  based on the specified radius
@@ -134,7 +130,7 @@ if __name__ == '__main__':
     feature = HexGrid.load("../data/Birmingham-3058.json")
     coords = HexGrid.coords(feature)
     min_max = HexGrid.boundary(coords)
-    radius = HexGrid.calulate_hex_radius(*min_max)
+    radius = HexGrid.calculate_hex_radius()
 
     # buid a hex grid across the whole boundary
     grid = HexGrid.build_grid(min_max[0], min_max[1], radius)
