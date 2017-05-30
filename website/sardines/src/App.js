@@ -8,6 +8,7 @@ import './w3.css';
 import 'leaflet/dist/leaflet.css';
 import 'font-awesome/css/font-awesome.min.css';
 import axios from 'axios';
+import pako from 'pako';
 
 class App extends Component {
     constructor() {
@@ -30,8 +31,9 @@ class App extends Component {
                 {name: 'Dallas, TX', density: 1474},
                 {name: 'Atlanta, GA', density: 1345},
                 {name: 'Austin, TX', density: 1208},
-                // {name: 'Birmingham, AL', density: 562},
-                // {name: 'Nasvhille, TN', density: 512},
+                //{name: 'Birmingham, AL', density: 655}, /* !mwd - my calculated density */
+                //{name: 'Birmingham, AL', density: 562},
+                //{name: 'Nasvhille, TN', density: 512},
             ],
             currentCity: null,
             population: {city: 212461,
@@ -66,13 +68,18 @@ class App extends Component {
         } else {
             console.log('fetching geojson');
             // fetch first
-            axios.get('/birmingham-hexgrid-with-priorities.geojson')
-                .then((response) => {
-                    console.log('fetch data ' + response);
-                    this.geojson = response.data.features;
+            axios.get('/birmingham-hexgrid-with-priorities.geojson.gz', {
+                responseType: 'arraybuffer'
+            }).then((response) => {
+                // decompress
+                console.log('compressed data=' + response.data);
+                let r = JSON.parse(pako.ungzip(response.data, {to: 'string'}));
 
-                    this.doBuild(city, this.geojson, this.getPopulation(), city.density);
-                });
+                console.log('fetch data ' + r);
+                this.geojson = r.features;
+
+                this.doBuild(city, this.geojson, this.getPopulation(), city.density);
+            });
         }
 
     }
