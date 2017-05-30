@@ -72,10 +72,8 @@ class App extends Component {
                 responseType: 'arraybuffer'
             }).then((response) => {
                 // decompress
-                console.log('compressed data=' + response.data);
                 let r = JSON.parse(pako.ungzip(response.data, {to: 'string'}));
 
-                console.log('fetch data ' + r);
                 this.geojson = r.features;
 
                 this.doBuild(city, this.geojson, this.getPopulation(), city.density);
