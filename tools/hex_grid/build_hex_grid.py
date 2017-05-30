@@ -20,12 +20,31 @@ class HexGrid:
         geo = geojson.loads(f.read())
         
         #!mwd - not sure the standard way to get this!
-        return geo['features'][2]['geometry']
+        return geo['features']
 
-    def coords(feature):
-        return feature['coordinates'][0]
+    def boundary(features):
+        mins_maxes = []
+        
+        for feature in features:
+            if feature['geometry']['type'] == 'MultiPolygon':
+                for coord in feature['geometry']['coordinates'][0]:
+                    mins_maxes.append(HexGrid.singleBoundary(coord))
+            elif feature['geometry']['type'] == 'Polygon':
+                mins_maxes.append(HexGrid.singleBoundary(feature['geometry']['coordinates'][0]))
+            else:
+                print('Unknown feature type: %s' % (feature['geometry']['type']))
 
-    def boundary(coords):
+        print('mins_maxes=%s' % mins_maxes)
+        minimum_lat = min([x[0][1] for x in mins_maxes])
+        minimum_lon = min([x[0][0] for x in mins_maxes])
+        maximum_lat = max([x[1][1] for x in mins_maxes])
+        maximum_lon = max([x[1][0] for x in mins_maxes])
+
+        return ([minimum_lon, minimum_lat],
+                [maximum_lon, maximum_lat])
+    
+    def singleBoundary(coords):
+        #print('boundary for: %s' % coords)
         # find the min/max longitude
         min_lon = min(coords, key = lambda x: x[0])
         max_lon = max(coords, key = lambda x: x[0])
@@ -127,16 +146,26 @@ class HexGrid:
             cur += step
     
 if __name__ == '__main__':
-    feature = HexGrid.load("../data/Birmingham-3058.json")
-    coords = HexGrid.coords(feature)
-    min_max = HexGrid.boundary(coords)
+    features = HexGrid.load("../data/birmingham-metro-city-boundaries.geojson")
+
+    # find the most min and most max of all the polygons
+    min_max = HexGrid.boundary(features)
+
     radius = HexGrid.calculate_hex_radius()
+    print('min_max: %s' % (min_max,))
+    print('radius: %s' % radius)
 
     # buid a hex grid across the whole boundary
     grid = HexGrid.build_grid(min_max[0], min_max[1], radius)
+    print('grid size=%d' % len(grid))
 
     # find only those that are inside the boundary
-    inside = [HexGrid.filter_outside_points(feature, x) for x in grid]
+    # !mwd - I have temporarily removed this, and instead
+    #  am just creating one large square grid. Then I'm using
+    #  QGIS to prioritize hexagons inside the boundaries I want
+    #  and filtering out the ones I don't.
+    #inside = [HexGrid.filter_outside_points(features, x) for x in grid]
+    inside = grid
 
     # create the hex shapes
     hexes = HexGrid.build_hex_grid(inside, radius)
