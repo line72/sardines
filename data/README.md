@@ -7,6 +7,13 @@ This is a geojson representing the greater Birmingham, AL metro area. This is th
 This data set came from:
 http://theplacename.com/place/birmingham/3058
 
+## birmingham-metro-city-boundaries.geojson
+
+This is a geojson representing the political boundaries of the whole Birmingham, AL Metro area. This dataset is used when display Birmingham in Metro mode. The "Metro" is pretty losely defined, so not all municipalities are listed.
+
+This data set came from:
+https://mapzen.com/data/metro-extracts/your-extracts/a12adc322fd0
+
 ## QGIS
 
 The webservice expects our hexgrid to have a `priority` value associated with each hexagon. The `priority` value is used to sort the hexagons, so the visualization knows which to fill in first. A lower value indicates the first hexagon to be filled in.
