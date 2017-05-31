@@ -1,4 +1,5 @@
 import React from 'react';
+import Util from './util';
 
 class CityList extends React.Component {
 
@@ -26,22 +27,6 @@ class CityList extends React.Component {
 	    this.props.onCityChanged(true);
 	}
     }
-
-    addCommas(nStr) {
-	nStr += '';
-	
-	let x = nStr.split('.');
-	let x1 = x[0];
-	let x2 = x.length > 1 ? '.' + x[1] : '';
-	let rgx = /(\d+)(\d{3})/;
-
-	while (rgx.test(x1)) {
-	    x1 = x1.replace(rgx, '$1,$2');
-	}
-	
-	return x1 + x2;
-    }
-
     
     render() {
 	const cities = this.props.cities.map((city, step) => {
@@ -54,7 +39,7 @@ class CityList extends React.Component {
 		   key={city.name}
 		   className="w3-bar-item w3-button"
 		   onClick={() => this.onClick(city, this.props.onClick)}>{t}{city.name}
-		  <br /><span className="city-subtext"><b>{this.addCommas(city.density)}</b> people/km<sup>2</sup></span>
+		  <br /><span className="city-subtext"><b>{Util.addCommas(city.density)}</b> people/km<sup>2</sup></span>
 		</button>
             );
         });
@@ -77,8 +62,8 @@ class CityList extends React.Component {
 			<option value="metro">Birmingham Metro</option>
 		      </select>
                     </span>
-		    <br /><span className="city-birmingham-subtext"><b>{this.addCommas(this.props.birminghamPopulation.population)}</b> people</span>
-		    <br /><span className="city-birmingham-subtext"><b>{this.addCommas(this.props.birminghamPopulation.density)}</b> people/km<sup>2</sup></span>
+		    <br /><span className="city-birmingham-subtext"><b>{Util.addCommas(this.props.birminghamPopulation.population)}</b> people</span>
+		    <br /><span className="city-birmingham-subtext"><b>{Util.addCommas(this.props.birminghamPopulation.density)}</b> people/km<sup>2</sup></span>
 		  </span>
 		  <hr />
 		</div>

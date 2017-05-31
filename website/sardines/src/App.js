@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import SMap from './smap';
 import CityList from './citylist';
 import Overlay from './overlay';
+import Util from './util';
 
 import './App.css';
 import './w3.css';
@@ -176,7 +177,7 @@ class App extends Component {
 
 		  <div className="w3-hide-medium w3-hide-small sardine-header">
 		    <h1 className="sardine-h1">If Birmingham Were As Dense As {currentCity || '...'}</h1>
-		    {currentCity && <h3 className="sardine-h3">then all the residents would have to live in this block</h3>}
+		{currentCity && <h3 className="sardine-h3">then all {Util.addCommas(population.population)} residents would have to live in this block</h3>}
 		  </div>
 
 		  <div className="w3-container">
