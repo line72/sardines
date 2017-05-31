@@ -15,8 +15,21 @@ class App extends Component {
         super();
 
         this.worker = null;
+	this.geoJson = {
+            loaded: false,
+            low: {
+		areaPerHex: 0.649519052838329,
+		geoJson: null
+            },
+            high: {
+		areaPerHex: 0.025980762,
+		geoJson: null
+            }
+	}
         this.state = {
             cities: [
+		{name: 'Manila, Philippines', density: 41515},
+		{name: 'Mumbai, India', density: 28508},
                 {name: 'Paris', density: 21603},
                 {name: 'Manhattan', density: 18903},
                 {name: 'San Francisco', density: 7124},
@@ -33,7 +46,7 @@ class App extends Component {
                 {name: 'Austin, TX', density: 1208},
                 {name: 'Birmingham, AL', density: 655}, /* !mwd - my calculated density */
                 //{name: 'Birmingham, AL', density: 562},
-                //{name: 'Nasvhille, TN', density: 512},
+                {name: 'Nasvhille, TN', density: 512},
             ],
             currentCity: null,
             population: {city: 212461,
@@ -41,7 +54,6 @@ class App extends Component {
                         },
             useMetroPopulation: false,
             features: null,
-            geojson: null,
             loading: false,
         }
     }
@@ -53,7 +65,7 @@ class App extends Component {
             return this.state.population.city;
         }
     }
-         
+    
     handleCityClick(city) {
         console.log("city was clicked " + city.name + " " + city.density);
         console.log("using birmingham population: " + this.getPopulation());
@@ -62,24 +74,34 @@ class App extends Component {
             loading: true
         });
 
-        if (this.geojson != null) {
+	let population = this.getPopulation();
+	
+        if (this.geoJson.loaded) {
             console.log('already have geojson');
-            this.doBuild(city, this.geojson, this.getPopulation(), city.density);
+            this.doBuild(city, this.geoJson, population, city.density);
         } else {
-            console.log('fetching geojson');
-            // fetch first
-            axios.get('/birmingham-hexgrid-with-priorities.geojson.gz', {
-                responseType: 'arraybuffer'
-            }).then((response) => {
-                // decompress
-                let r = JSON.parse(pako.ungzip(response.data, {to: 'string'}));
+            axios.all([this.fetchHexGrid('/birmingham-hexgrid-with-priorities.geojson.gz'),
+		       this.fetchHexGrid('/birmingham-hexgrid-with-priorities-0.5km.geojson.gz')])
+		.then(axios.spread((highRes, lowRes) => {
 
-                this.geojson = r.features;
+		    this.geoJson.high.geoJson = highRes;
+		    this.geoJson.low.geoJson = lowRes;
+		    this.geoJson.loaded = true;
 
-                this.doBuild(city, this.geojson, this.getPopulation(), city.density);
-            });
-        }
+		    this.doBuild(city, this.geoJson, population, city.density);
+		}));
+	}
+    }
 
+    fetchHexGrid(name) {
+        console.log('fetching geojson: ' + name);
+        // fetch first the high res
+        return axios.get(name, {
+            responseType: 'arraybuffer'
+        }).then((response) => {
+            // decompress
+            return JSON.parse(pako.ungzip(response.data, {to: 'string'}));
+        });
     }
 
     doBuild(city, geojson, population) {
@@ -114,8 +136,8 @@ class App extends Component {
     render() {
         return (
             <div className="App">
-	      {/* NavBar */}
-	      <CityList cities={this.state.cities}
+              {/* NavBar */}
+              <CityList cities={this.state.cities}
 			current={this.state.currentCity}
 			onClick={(city) => this.handleCityClick(city)}/>
 		
@@ -131,7 +153,7 @@ class App extends Component {
 		  </div>
 
 		  <div className="w3-container">
-                    <SMap features={this.state.features} city={this.state.currentCity} />
+                    <SMap features={this.state.features} city={this.state.currentCity} useMetroPopulation={this.state.useMetroPopulation} />
                     <Overlay visible={this.state.loading} />
 		  </div>
 		</div>

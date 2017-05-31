@@ -3,7 +3,7 @@ class Builder {
         this.mapCentroid = [-86.806379, 33.513501];
     }
 
-    build(features, population, density) {
+    build(geojson, population, density) {
         /* In our hex grid, each hex has
          * a radius (and side length) of
          * 0.1km. Using the area equation
@@ -14,12 +14,9 @@ class Builder {
          * We calculate the area of each
          * hex to be 0.025980762km^2
          */
-        const areaPerHex = 0.025980762;
-        const peoplePerHex = 1.0 / areaPerHex;
-        
-        const densityPerHex = density / peoplePerHex;
-        
-        const desired = population / densityPerHex;
+
+	const [desired, features] = this.findDesiredFeatures(geojson, population, density);
+	
         let count = 0;
 
         features.sort((a, b) => {
@@ -30,7 +27,7 @@ class Builder {
                 return 1;
             } else if (b.properties.priority == null) {
                 return -1;
-            } else if (a.properties.priority == 100 && a.properties.priority == b.properties.priority) {
+            } else if (a.properties.priority == b.properties.priority) {
                 // !mwd - priority 100 means Birmingham city limits, but
                 //   not truely weighted (only the inner neighborhoods are weighted,
                 //   and 100 is "everything else" in birmingham.
@@ -238,6 +235,32 @@ class Builder {
         return null;
     }
 
+    findDesiredFeatures(geojson, population, density) {
+	// decide if we should use the high res or low-res
+	//  version
+
+	// first try high res
+	let areaPerHex = geojson.high.areaPerHex;
+	let peoplePerHex = 1.0 / areaPerHex;
+        let densityPerHex = density / peoplePerHex;
+        let desired = population / densityPerHex;
+
+	// if we want less than the available features,
+	//  then use this version
+	if (desired < geojson.high.geoJson.features.length) {
+            return [desired, geojson.high.geoJson.features];
+	}
+
+	// fallback to low-res
+	console.log('falling back to low res');
+	areaPerHex = geojson.low.areaPerHex;
+	peoplePerHex = 1.0 / areaPerHex;
+        densityPerHex = density / peoplePerHex;
+        desired = population / densityPerHex;
+
+	return [desired, geojson.low.geoJson.features];
+    }
+    
     buildGeoJSON(boundaries) {
         return boundaries.filter((boundary) => {
             // needs to be at least 2 hexes big

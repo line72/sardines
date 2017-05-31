@@ -44,7 +44,7 @@ class CityList extends React.Component {
 		  <span className="w3-large w3-text-grey sardine-padding-0">
 		    <span className="w3-bar-item sardine-padding-0">Birmingham</span>
 		    <br /><span className="city-birmingham-subtext"><b>212,461</b> people</span>
-		    <br /><span className="city-birmingham-subtext"><b>562</b> people/km<sup>2</sup></span>
+		    <br /><span className="city-birmingham-subtext"><b>655</b> people/km<sup>2</sup></span>
 		  </span>
 		  <hr />
 		</div>

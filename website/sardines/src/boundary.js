@@ -24,7 +24,15 @@ class Boundary extends React.Component {
     }
 
     fetchMetro() {
-
+	console.log('fetch metro boundary');
+	axios.get('/birmingham-metro-city-boundaries.geojson')
+	    .then((response) => {
+		console.log('got response ' + response.data);
+		this.setState({
+		    metro: response.data
+		});
+	    });
+	
     }
     
     render() {
