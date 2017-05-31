@@ -77,8 +77,8 @@ class CityList extends React.Component {
 			<option value="metro">Birmingham Metro</option>
 		      </select>
                     </span>
-		    <br /><span className="city-birmingham-subtext"><b>{this.addCommas(this.props.birminghamPopulation)}</b> people</span>
-		    <br /><span className="city-birmingham-subtext"><b>655</b> people/km<sup>2</sup></span>
+		    <br /><span className="city-birmingham-subtext"><b>{this.addCommas(this.props.birminghamPopulation.population)}</b> people</span>
+		    <br /><span className="city-birmingham-subtext"><b>{this.addCommas(this.props.birminghamPopulation.density)}</b> people/km<sup>2</sup></span>
 		  </span>
 		  <hr />
 		</div>

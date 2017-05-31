@@ -46,13 +46,19 @@ class App extends Component {
                 {name: 'Atlanta, GA', density: 1345},
                 {name: 'Austin, TX', density: 1208},
                 {name: 'Birmingham, AL', density: 655}, /* !mwd - my calculated density */
-                //{name: 'Birmingham, AL', density: 562},
                 {name: 'Nasvhille, TN', density: 512},
             ],
             currentCity: null,
-            population: {city: 212461,
-                         metro: 1200000
-                        },
+            population: {
+                city: {
+                    population: 212461,
+                    density: 655
+                },
+                metro: {
+                    population: 1132000,
+                    density: 32
+                }
+            },
             useMetroPopulation: false,
             features: null,
             loading: false,
@@ -78,13 +84,13 @@ class App extends Component {
     handleCityClick(city) {
 	console.log('handleCityClick ' + city);
         console.log("city was clicked " + city.name + " " + city.density);
-        console.log("using birmingham population: " + this.getPopulation());
+        console.log("using birmingham population: " + this.getPopulation().population);
 
         this.setState({
             loading: true
         });
 
-	let population = this.getPopulation();
+	let population = this.getPopulation().population;
 	
         if (this.geoJson.loaded) {
             console.log('already have geojson');
