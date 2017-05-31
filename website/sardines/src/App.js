@@ -52,7 +52,7 @@ class App extends Component {
             population: {city: 212461,
                          metro: 1200000
                         },
-            useMetroPopulation: false,
+            useMetroPopulation: true,
             features: null,
             loading: false,
         }
@@ -134,11 +134,15 @@ class App extends Component {
     }
     
     render() {
+	let population = this.getPopulation();
+	
         return (
             <div className="App">
               {/* NavBar */}
               <CityList cities={this.state.cities}
 			current={this.state.currentCity}
+			useMetroPopulation={this.state.useMetroPopulation}
+			birminghamPopulation={population}
 			onClick={(city) => this.handleCityClick(city)}/>
 		
 		{/* Main Content with Header */}

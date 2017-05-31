@@ -15,7 +15,7 @@ class Density extends React.Component {
         // create a bunch of json from the features
         const features = this.props.features.map((feature, step) => {
             let myStyle = {
-	        "color": this.getRandomColor(),
+	        "color": "#362261",
 	        "stroke": true,
 	        "fillOpacity": 0.5
 	    };

@@ -17,6 +17,22 @@ class CityList extends React.Component {
 
 	cb(city);
     }
+
+    addCommas(nStr) {
+	nStr += '';
+	
+	let x = nStr.split('.');
+	let x1 = x[0];
+	let x2 = x.length > 1 ? '.' + x[1] : '';
+	let rgx = /(\d+)(\d{3})/;
+
+	while (rgx.test(x1)) {
+	    x1 = x1.replace(rgx, '$1' + ',' + '$2');
+	}
+	
+	return x1 + x2;
+    }
+
     
     render() {
 	const cities = this.props.cities.map((city, step) => {
@@ -29,12 +45,11 @@ class CityList extends React.Component {
 		   key={city.name}
 		   className="w3-bar-item w3-button"
 		   onClick={() => this.onClick(city, this.props.onClick)}>{t}{city.name}
-		  <br /><span className="city-subtext"><b>{city.density}</b> people/km<sup>2</sup></span>
+		  <br /><span className="city-subtext"><b>{this.addCommas(city.density)}</b> people/km<sup>2</sup></span>
 		</button>
             );
         });
-	
-        
+		
         return (
 	    <div>
 	      <nav className="w3-sidebar w3-bar-block w3-white w3-collapse w3-top sardine-sidebar" id="sidebar">
@@ -43,7 +58,7 @@ class CityList extends React.Component {
 		  <i onClick={() => this.onClose()} className="fa fa-remove w3-hide-large w3-button w3-display-topright"></i>
 		  <span className="w3-large w3-text-grey sardine-padding-0">
 		    <span className="w3-bar-item sardine-padding-0">Birmingham</span>
-		    <br /><span className="city-birmingham-subtext"><b>212,461</b> people</span>
+		    <br /><span className="city-birmingham-subtext"><b>{this.addCommas(this.props.birminghamPopulation)}</b> people</span>
 		    <br /><span className="city-birmingham-subtext"><b>655</b> people/km<sup>2</sup></span>
 		  </span>
 		  <hr />
