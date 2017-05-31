@@ -20,19 +20,12 @@ class Builder {
         let count = 0;
 
         features.sort((a, b) => {
-            // !mwd - todo, if priority is the same
-            //  sort by the closest to the city center.
-            
             if (a.properties.priority == null) {
                 return 1;
             } else if (b.properties.priority == null) {
                 return -1;
             } else if (a.properties.priority == b.properties.priority) {
-                // !mwd - priority 100 means Birmingham city limits, but
-                //   not truely weighted (only the inner neighborhoods are weighted,
-                //   and 100 is "everything else" in birmingham.
-                //  we might want to remove this, but i didn't want to perform this calculation
-                //   for all weighted areas too, since it is typically unnesseary.
+                // prioritize by the one closest to the center
                 let distanceA = this.findDistanceToCenter([a.properties.centroidLongitude, a.properties.centroidLatitude]);
                 let distanceB = this.findDistanceToCenter([b.properties.centroidLongitude, b.properties.centroidLatitude]);
                 return distanceA - distanceB;
