@@ -1,23 +1,53 @@
+/* -*- Mode: rjsx -*- */
+
+/*******************************************
+ * Copyright (2017)
+ *  Marcus Dillavou <line72@line72.net>
+ *  http://line72.net
+ *
+ * Sardines:
+ *  https://github.com/line72/sardines
+ *  https://sardines.line72.net
+ *
+ * Licensed Under the GPLv3
+ *******************************************/
+
 import React, { Component } from 'react';
 import SMap from './smap';
 import CityList from './citylist';
 import Overlay from './overlay';
+import Util from './util';
 
 import './App.css';
 import './w3.css';
 import 'leaflet/dist/leaflet.css';
 import 'font-awesome/css/font-awesome.min.css';
 import axios from 'axios';
+import pako from 'pako';
 
 class App extends Component {
     constructor() {
         super();
 
         this.worker = null;
+        this.geoJson = {
+            loaded: false,
+            low: {
+                areaPerHex: 0.649519052838329,
+                geoJson: null
+            },
+            high: {
+                areaPerHex: 0.025980762,
+                geoJson: null
+            }
+        }
         this.state = {
             cities: [
+                {name: 'Manila, Philippines', density: 41515},
+                {name: 'Mumbai, India', density: 28508},
                 {name: 'Paris', density: 21603},
                 {name: 'Manhattan', density: 18903},
+                {name: 'Cairo', density: 18071},
                 {name: 'San Francisco', density: 7124},
                 {name: 'Tokyo', density: 6225},
                 {name: 'Boston', density: 5335},
@@ -30,16 +60,22 @@ class App extends Component {
                 {name: 'Dallas, TX', density: 1474},
                 {name: 'Atlanta, GA', density: 1345},
                 {name: 'Austin, TX', density: 1208},
-                // {name: 'Birmingham, AL', density: 562},
-                // {name: 'Nasvhille, TN', density: 512},
+                {name: 'Birmingham, AL', density: 655}, /* !mwd - my calculated density */
+                {name: 'Nasvhille, TN', density: 512},
             ],
             currentCity: null,
-            population: {city: 212461,
-                         metro: 1200000
-                        },
+            population: {
+                city: {
+                    population: 212461,
+                    density: 655
+                },
+                metro: {
+                    population: 1132000,
+                    density: 32
+                }
+            },
             useMetroPopulation: false,
             features: null,
-            geojson: null,
             loading: false,
         }
     }
@@ -51,30 +87,52 @@ class App extends Component {
             return this.state.population.city;
         }
     }
-         
+
+    handlePopulationChanged(useMetroPopulation) {
+        this.setState({
+            useMetroPopulation: useMetroPopulation,
+            currentCity: null,
+            features: null
+        });
+    }
+
     handleCityClick(city) {
+        console.log('handleCityClick ' + city);
         console.log("city was clicked " + city.name + " " + city.density);
-        console.log("using birmingham population: " + this.getPopulation());
+        console.log("using birmingham population: " + this.getPopulation().population);
 
         this.setState({
             loading: true
         });
 
-        if (this.geojson != null) {
+        let population = this.getPopulation().population;
+
+        if (this.geoJson.loaded) {
             console.log('already have geojson');
-            this.doBuild(city, this.geojson, this.getPopulation(), city.density);
+            this.doBuild(city, this.geoJson, population, city.density);
         } else {
-            console.log('fetching geojson');
-            // fetch first
-            axios.get('/birmingham-hexgrid-with-priorities.geojson')
-                .then((response) => {
-                    console.log('fetch data ' + response);
-                    this.geojson = response.data.features;
+            axios.all([this.fetchHexGrid('/birmingham-hexgrid-with-priorities.geojson.gz'),
+                       this.fetchHexGrid('/birmingham-hexgrid-with-priorities-0.5km.geojson.gz')])
+                .then(axios.spread((highRes, lowRes) => {
 
-                    this.doBuild(city, this.geojson, this.getPopulation(), city.density);
-                });
+                    this.geoJson.high.geoJson = highRes;
+                    this.geoJson.low.geoJson = lowRes;
+                    this.geoJson.loaded = true;
+
+                    this.doBuild(city, this.geoJson, population, city.density);
+                }));
         }
+    }
 
+    fetchHexGrid(name) {
+        console.log('fetching geojson: ' + name);
+        // fetch first the high res
+        return axios.get(name, {
+            responseType: 'arraybuffer'
+        }).then((response) => {
+            // decompress
+            return JSON.parse(pako.ungzip(response.data, {to: 'string'}));
+        });
     }
 
     doBuild(city, geojson, population) {
@@ -89,7 +147,7 @@ class App extends Component {
         this.worker.onmessage = (e) =>  {
             console.log('received results for ' + e.data.city.name);
             this.setState({
-                currentCity: e.data.city.name,
+                currentCity: e.data.city,
                 features: e.data.results,
                 loading: false,
             });
@@ -105,31 +163,42 @@ class App extends Component {
                                  density: city.density});
 
     }
-    
+
     render() {
+        let population = this.getPopulation();
+
+        let currentCity = null;
+        if (this.state.currentCity != null) {
+            currentCity = this.state.currentCity.name;
+        }
+
         return (
             <div className="App">
-	      {/* NavBar */}
-	      <CityList cities={this.state.cities}
-			current={this.state.currentCity}
-			onClick={(city) => this.handleCityClick(city)}/>
-		
-		{/* Main Content with Header */}
-		<div className="w3-main sardine-main">
-		  {/* Push content down on small screens */}
-		  <div className="w3-hide-large sardine-header-margin">
-		  </div>
+                {/* NavBar */}
+                <CityList cities={this.state.cities}
+                          current={currentCity}
+                          useMetroPopulation={this.state.useMetroPopulation}
+                          birminghamPopulation={population}
+                          onCityChanged={(useMetro) => this.handlePopulationChanged(useMetro)}
+                    onClick={(city) => this.handleCityClick(city)}
+                    />
 
-		  <div className="w3-hide-medium w3-hide-small sardine-header">
-		    <h1 className="sardine-h1">If Birmingham Were As Dense As {this.state.currentCity || '...'}</h1>
-		    {this.state.currentCity && <h3 className="sardine-h3">then all the residents would have to live in this block</h3>}
-		  </div>
+                    {/* Main Content with Header */}
+                    <div className="w3-main sardine-main">
+                        {/* Push content down on small screens */}
+                        <div className="w3-hide-large sardine-header-margin">
+                        </div>
 
-		  <div className="w3-container">
-                    <SMap features={this.state.features} city={this.state.currentCity} />
-                    <Overlay visible={this.state.loading} />
-		  </div>
-		</div>
+                        <div className="w3-hide-medium w3-hide-small sardine-header">
+                            <h1 className="sardine-h1">If Birmingham Were As Dense As {currentCity || '...'}</h1>
+                            {currentCity && <h3 className="sardine-h3">then all {Util.addCommas(population.population)} residents would have to live in this block</h3>}
+                        </div>
+
+                        <div className="w3-container">
+                            <SMap features={this.state.features} city={currentCity} useMetroPopulation={this.state.useMetroPopulation} />
+                            <Overlay visible={this.state.loading} />
+                        </div>
+                    </div>
             </div>
         );
     }

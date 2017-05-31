@@ -1,8 +1,23 @@
+/* -*- Mode: rjsx -*- */
+
+/*******************************************
+ * Copyright (2017)
+ *  Marcus Dillavou <line72@line72.net>
+ *  http://line72.net
+ *
+ * Sardines:
+ *  https://github.com/line72/sardines
+ *  https://sardines.line72.net
+ *
+ * Licensed Under the GPLv3
+ *******************************************/
+
 class Builder {
     constructor() {
+        this.mapCentroid = [-86.806379, 33.513501];
     }
 
-    build(features, population, density) {
+    build(geojson, population, density) {
         /* In our hex grid, each hex has
          * a radius (and side length) of
          * 0.1km. Using the area equation
@@ -13,27 +28,26 @@ class Builder {
          * We calculate the area of each
          * hex to be 0.025980762km^2
          */
-        const areaPerHex = 0.025980762;
-        const peoplePerHex = 1.0 / areaPerHex;
-        
-        const densityPerHex = density / peoplePerHex;
-        
-        const desired = population / densityPerHex;
+
+        const [desired, features] = this.findDesiredFeatures(geojson, population, density);
+
         let count = 0;
 
-        features.sort(function(a, b) {
-            // !mwd - todo, if priority is the same
-            //  sort by the closest to the city center.
-            
+        features.sort((a, b) => {
             if (a.properties.priority == null) {
                 return 1;
             } else if (b.properties.priority == null) {
                 return -1;
+            } else if (a.properties.priority == b.properties.priority) {
+                // prioritize by the one closest to the center
+                let distanceA = this.findDistanceToCenter([a.properties.centroidLongitude, a.properties.centroidLatitude]);
+                let distanceB = this.findDistanceToCenter([b.properties.centroidLongitude, b.properties.centroidLatitude]);
+                return distanceA - distanceB;
             } else {
                 return a.properties.priority - b.properties.priority;
             }
         });
-        
+
         let results = [];
         for (let key in features) {
             var feature = features[key];
@@ -41,16 +55,16 @@ class Builder {
             //if (count < desired && feature.properties.priority == 1) {
             if (count < desired) {
                 count += 1;
-                
+
                 results.push(feature);
             }
         }
 
-	console.log('count=' + count + ' desired=' + desired);
-	
+        console.log('count=' + count + ' desired=' + desired);
+
         // now just find a boundary to create a single
         //  representation
-        
+
         // create a list of all the points and their count
         let pointToFeatures = {};
         for (let i in results) {
@@ -66,14 +80,14 @@ class Builder {
                 }
             }
         }
-        
+
         // filter out any results that
         //  don't have any edges
         let filteredResults = results.filter((r) => {
             for (let i in r["geometry"]["coordinates"][0]) {
                 let c = r["geometry"]["coordinates"][0][i];
                 let key = this.roundKey(c);
-                
+
                 if (pointToFeatures[key].length <= 2) {
                     // found an edge
                     return true;
@@ -81,7 +95,7 @@ class Builder {
             }
             return false;
         });
-        
+
         console.log('all results = ' + results.length);
         console.log('filtered results = ' + filteredResults.length);
 
@@ -90,24 +104,24 @@ class Builder {
         while (filteredResults.length > 0) {
             let boundary = []
             let startingKey = null;
-            
+
             let toVisit = []
 
             // remove this item from filteredResults
             let r = filteredResults[0];
-            
+
             toVisit.push([r, 0]);
 
             while (toVisit.length > 0) {
                 // pop this off
                 let [n, startingIndex] = toVisit.pop();
-                
+
                 // remove from our filteredResults
                 let index = filteredResults.indexOf(n);
                 if (index !== -1) {
                     filteredResults.splice(index, 1);
                 }
-                
+
                 let found = false;
                 // start at the starting index, and loop through
                 //  the coordinates. The 7th coordinate (index 6) is always
@@ -121,7 +135,7 @@ class Builder {
                 let start = 0;
                 let end = 0;
                 let inc = 1;
-                
+
                 if (pointToFeatures[k].length <= 2) { // counter
                     start = startingIndex;
                     end = start + 6;
@@ -132,7 +146,7 @@ class Builder {
                     end = start - 6;
                     inc = -1;
                 }
-                
+
                 for (let i = start; i < end; i += inc) {
                     let c = n["geometry"]["coordinates"][0][i % 6];
                     let key = this.roundKey(c);
@@ -140,22 +154,22 @@ class Builder {
                     if (key === startingKey) {
                         break;
                     }
-                    
+
                     if (pointToFeatures[key].length === 1) {
                         found = true;
-                        
+
                         if (boundary.length === 0) {
                             startingKey = key;
                         }
-                        
+
                         boundary.push(c);
                     } else if (pointToFeatures[key].length === 2) {
                         found = true;
-                        
+
                         if (boundary.length === 0) {
                             startingKey = key;
                         }
-                        
+
                         boundary.push(c);
                         // find the other polygon to visit
                         let o = this.getOtherAndOffset(pointToFeatures[key], n, key);
@@ -187,7 +201,7 @@ class Builder {
         // generate the GeoJSON geometry based on the boundaries
         let geoJSON = this.buildGeoJSON(boundaries);
         console.log('geoJSON=' + geoJSON.length);
-        
+
         return geoJSON;
     }
 
@@ -197,6 +211,15 @@ class Builder {
      */
     roundKey(point) {
         return point[0].toFixed(11) + 'x' + point[1].toFixed(11);
+    }
+
+    /**
+     * calculate the distance between the polygon
+     * centroid and our map centroid
+     */
+    findDistanceToCenter(centroid) {
+        return Math.sqrt(Math.pow(centroid[0] - this.mapCentroid[0], 2) +
+                         Math.pow(centroid[1] - this.mapCentroid[1], 2));
     }
 
     /**
@@ -217,6 +240,32 @@ class Builder {
             }
         }
         return null;
+    }
+
+    findDesiredFeatures(geojson, population, density) {
+        // decide if we should use the high res or low-res
+        //  version
+
+        // first try high res
+        let areaPerHex = geojson.high.areaPerHex;
+        let peoplePerHex = 1.0 / areaPerHex;
+        let densityPerHex = density / peoplePerHex;
+        let desired = population / densityPerHex;
+
+        // if we want less than the available features,
+        //  then use this version
+        if (desired < geojson.high.geoJson.features.length) {
+            return [desired, geojson.high.geoJson.features];
+        }
+
+        // fallback to low-res
+        console.log('falling back to low res');
+        areaPerHex = geojson.low.areaPerHex;
+        peoplePerHex = 1.0 / areaPerHex;
+        densityPerHex = density / peoplePerHex;
+        desired = population / densityPerHex;
+
+        return [desired, geojson.low.geoJson.features];
     }
 
     buildGeoJSON(boundaries) {
