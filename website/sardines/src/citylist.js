@@ -36,7 +36,7 @@ class CityList extends React.Component {
 	let rgx = /(\d+)(\d{3})/;
 
 	while (rgx.test(x1)) {
-	    x1 = x1.replace(rgx, '$1' + ',' + '$2');
+	    x1 = x1.replace(rgx, '$1,$2');
 	}
 	
 	return x1 + x2;
@@ -68,16 +68,15 @@ class CityList extends React.Component {
 	    <div>
 	      <nav className="w3-sidebar w3-bar-block w3-white w3-collapse w3-top sardine-sidebar" id="sidebar">
 		{/* Close Button */}
-		<div className="w3-container w3-display-container w3-padding-16">
+		<div className="w3-container w3-display-container">
 		  <i onClick={() => this.onClose()} className="fa fa-remove w3-hide-large w3-button w3-display-topright"></i>
-		  <span className="w3-large w3-text-grey sardine-padding-0">
-		    <span className="w3-bar-item sardine-padding-0">Birmingham</span>
-		    <div className="w3-container">
-		      <select value={populationSelection} onChange={(evt) => this.onHandleCityChange(evt)}>
-			<option value="city">City</option>
-			<option value="metro">Metro</option>
+		  <span className="w3-medium w3-text-grey sardine-padding-0">
+		    <span className="w3-bar-item sardine-padding-0">
+		      <select className="w3-select sardine-select" value={populationSelection} onChange={(evt) => this.onHandleCityChange(evt)}>
+			<option value="city">Birmingham City<i className="fa fa-carent-right"></i></option>
+			<option value="metro">Birmingham Metro</option>
 		      </select>
-		    </div>
+                    </span>
 		    <br /><span className="city-birmingham-subtext"><b>{this.addCommas(this.props.birminghamPopulation)}</b> people</span>
 		    <br /><span className="city-birmingham-subtext"><b>655</b> people/km<sup>2</sup></span>
 		  </span>
