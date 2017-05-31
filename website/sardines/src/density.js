@@ -20,8 +20,10 @@ class Density extends React.Component {
 	        "fillOpacity": 0.5
 	    };
 
+	    let key = this.props.useMetroPopulation ? 'metro' : 'city'
+	    
             return (
-                <GeoJSON key={this.props.name+step} data={feature} style={myStyle} />
+                <GeoJSON key={this.props.name+key+step} data={feature} style={myStyle} />
             );
         });
         

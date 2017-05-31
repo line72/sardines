@@ -41,9 +41,9 @@ class SMap extends React.Component {
                   url={this.state.tile.url}
                   subdomains={this.state.tile.subdomains}
                   />
-		<Boundary useMetroPopulation={this.props.useMetroPopulation}/>
+		<Boundary useMetroPopulation={this.props.useMetroPopulation} />
                 {this.props.features != null && 
-                <Density features={this.props.features} name={this.props.city} />}
+                <Density features={this.props.features} name={this.props.city} useMetroPopulation={this.props.useMetroPopulation} />}
               </Map>
             </div>
         );

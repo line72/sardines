@@ -18,6 +18,15 @@ class CityList extends React.Component {
 	cb(city);
     }
 
+    onHandleCityChange(event) {
+	console.log('onHandleCityChange', event.target.value);
+	if (event.target.value === "city") {
+	    this.props.onCityChanged(false);
+	} else {
+	    this.props.onCityChanged(true);
+	}
+    }
+
     addCommas(nStr) {
 	nStr += '';
 	
@@ -49,7 +58,12 @@ class CityList extends React.Component {
 		</button>
             );
         });
-		
+
+	let populationSelection = 'city';
+	if (this.props.useMetroPopulation) {
+	    populationSelection = 'metro';
+	}
+	
         return (
 	    <div>
 	      <nav className="w3-sidebar w3-bar-block w3-white w3-collapse w3-top sardine-sidebar" id="sidebar">
@@ -58,6 +72,12 @@ class CityList extends React.Component {
 		  <i onClick={() => this.onClose()} className="fa fa-remove w3-hide-large w3-button w3-display-topright"></i>
 		  <span className="w3-large w3-text-grey sardine-padding-0">
 		    <span className="w3-bar-item sardine-padding-0">Birmingham</span>
+		    <div className="w3-container">
+		      <select value={populationSelection} onChange={(evt) => this.onHandleCityChange(evt)}>
+			<option value="city">City</option>
+			<option value="metro">Metro</option>
+		      </select>
+		    </div>
 		    <br /><span className="city-birmingham-subtext"><b>{this.addCommas(this.props.birminghamPopulation)}</b> people</span>
 		    <br /><span className="city-birmingham-subtext"><b>655</b> people/km<sup>2</sup></span>
 		  </span>

@@ -32,6 +32,7 @@ class App extends Component {
 		{name: 'Mumbai, India', density: 28508},
                 {name: 'Paris', density: 21603},
                 {name: 'Manhattan', density: 18903},
+		{name: 'Cairo', density: 18071},
                 {name: 'San Francisco', density: 7124},
                 {name: 'Tokyo', density: 6225},
                 {name: 'Boston', density: 5335},
@@ -52,7 +53,7 @@ class App extends Component {
             population: {city: 212461,
                          metro: 1200000
                         },
-            useMetroPopulation: true,
+            useMetroPopulation: false,
             features: null,
             loading: false,
         }
@@ -65,8 +66,17 @@ class App extends Component {
             return this.state.population.city;
         }
     }
+
+    handlePopulationChanged(useMetroPopulation) {
+	this.setState({
+            useMetroPopulation: useMetroPopulation,
+	    currentCity: null,
+	    features: null
+	});
+    }
     
     handleCityClick(city) {
+	console.log('handleCityClick ' + city);
         console.log("city was clicked " + city.name + " " + city.density);
         console.log("using birmingham population: " + this.getPopulation());
 
@@ -116,7 +126,7 @@ class App extends Component {
         this.worker.onmessage = (e) =>  {
             console.log('received results for ' + e.data.city.name);
             this.setState({
-                currentCity: e.data.city.name,
+                currentCity: e.data.city,
                 features: e.data.results,
                 loading: false,
             });
@@ -135,15 +145,22 @@ class App extends Component {
     
     render() {
 	let population = this.getPopulation();
+
+	let currentCity = null;
+	if (this.state.currentCity != null) {
+            currentCity = this.state.currentCity.name;
+	}
 	
         return (
             <div className="App">
               {/* NavBar */}
               <CityList cities={this.state.cities}
-			current={this.state.currentCity}
+			current={currentCity}
 			useMetroPopulation={this.state.useMetroPopulation}
 			birminghamPopulation={population}
-			onClick={(city) => this.handleCityClick(city)}/>
+			onCityChanged={(useMetro) => this.handlePopulationChanged(useMetro)}
+		        onClick={(city) => this.handleCityClick(city)}
+		/>
 		
 		{/* Main Content with Header */}
 		<div className="w3-main sardine-main">
@@ -152,12 +169,12 @@ class App extends Component {
 		  </div>
 
 		  <div className="w3-hide-medium w3-hide-small sardine-header">
-		    <h1 className="sardine-h1">If Birmingham Were As Dense As {this.state.currentCity || '...'}</h1>
-		    {this.state.currentCity && <h3 className="sardine-h3">then all the residents would have to live in this block</h3>}
+		    <h1 className="sardine-h1">If Birmingham Were As Dense As {currentCity || '...'}</h1>
+		    {currentCity && <h3 className="sardine-h3">then all the residents would have to live in this block</h3>}
 		  </div>
 
 		  <div className="w3-container">
-                    <SMap features={this.state.features} city={this.state.currentCity} useMetroPopulation={this.state.useMetroPopulation} />
+                    <SMap features={this.state.features} city={currentCity} useMetroPopulation={this.state.useMetroPopulation} />
                     <Overlay visible={this.state.loading} />
 		  </div>
 		</div>
