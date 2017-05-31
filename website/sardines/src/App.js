@@ -1,3 +1,17 @@
+/* -*- Mode: rjsx -*- */
+
+/*******************************************
+ * Copyright (2017)
+ *  Marcus Dillavou <line72@line72.net>
+ *  http://line72.net
+ *
+ * Sardines:
+ *  https://github.com/line72/sardines
+ *  https://sardines.line72.net
+ *
+ * Licensed Under the GPLv3
+ *******************************************/
+
 import React, { Component } from 'react';
 import SMap from './smap';
 import CityList from './citylist';
@@ -16,24 +30,24 @@ class App extends Component {
         super();
 
         this.worker = null;
-	this.geoJson = {
+        this.geoJson = {
             loaded: false,
             low: {
-		areaPerHex: 0.649519052838329,
-		geoJson: null
+                areaPerHex: 0.649519052838329,
+                geoJson: null
             },
             high: {
-		areaPerHex: 0.025980762,
-		geoJson: null
+                areaPerHex: 0.025980762,
+                geoJson: null
             }
-	}
+        }
         this.state = {
             cities: [
-		{name: 'Manila, Philippines', density: 41515},
-		{name: 'Mumbai, India', density: 28508},
+                {name: 'Manila, Philippines', density: 41515},
+                {name: 'Mumbai, India', density: 28508},
                 {name: 'Paris', density: 21603},
                 {name: 'Manhattan', density: 18903},
-		{name: 'Cairo', density: 18071},
+                {name: 'Cairo', density: 18071},
                 {name: 'San Francisco', density: 7124},
                 {name: 'Tokyo', density: 6225},
                 {name: 'Boston', density: 5335},
@@ -75,15 +89,15 @@ class App extends Component {
     }
 
     handlePopulationChanged(useMetroPopulation) {
-	this.setState({
+        this.setState({
             useMetroPopulation: useMetroPopulation,
-	    currentCity: null,
-	    features: null
-	});
+            currentCity: null,
+            features: null
+        });
     }
-    
+
     handleCityClick(city) {
-	console.log('handleCityClick ' + city);
+        console.log('handleCityClick ' + city);
         console.log("city was clicked " + city.name + " " + city.density);
         console.log("using birmingham population: " + this.getPopulation().population);
 
@@ -91,23 +105,23 @@ class App extends Component {
             loading: true
         });
 
-	let population = this.getPopulation().population;
-	
+        let population = this.getPopulation().population;
+
         if (this.geoJson.loaded) {
             console.log('already have geojson');
             this.doBuild(city, this.geoJson, population, city.density);
         } else {
             axios.all([this.fetchHexGrid('/birmingham-hexgrid-with-priorities.geojson.gz'),
-		       this.fetchHexGrid('/birmingham-hexgrid-with-priorities-0.5km.geojson.gz')])
-		.then(axios.spread((highRes, lowRes) => {
+                       this.fetchHexGrid('/birmingham-hexgrid-with-priorities-0.5km.geojson.gz')])
+                .then(axios.spread((highRes, lowRes) => {
 
-		    this.geoJson.high.geoJson = highRes;
-		    this.geoJson.low.geoJson = lowRes;
-		    this.geoJson.loaded = true;
+                    this.geoJson.high.geoJson = highRes;
+                    this.geoJson.low.geoJson = lowRes;
+                    this.geoJson.loaded = true;
 
-		    this.doBuild(city, this.geoJson, population, city.density);
-		}));
-	}
+                    this.doBuild(city, this.geoJson, population, city.density);
+                }));
+        }
     }
 
     fetchHexGrid(name) {
@@ -149,42 +163,42 @@ class App extends Component {
                                  density: city.density});
 
     }
-    
-    render() {
-	let population = this.getPopulation();
 
-	let currentCity = null;
-	if (this.state.currentCity != null) {
+    render() {
+        let population = this.getPopulation();
+
+        let currentCity = null;
+        if (this.state.currentCity != null) {
             currentCity = this.state.currentCity.name;
-	}
-	
+        }
+
         return (
             <div className="App">
-              {/* NavBar */}
-              <CityList cities={this.state.cities}
-			current={currentCity}
-			useMetroPopulation={this.state.useMetroPopulation}
-			birminghamPopulation={population}
-			onCityChanged={(useMetro) => this.handlePopulationChanged(useMetro)}
-		        onClick={(city) => this.handleCityClick(city)}
-		/>
-		
-		{/* Main Content with Header */}
-		<div className="w3-main sardine-main">
-		  {/* Push content down on small screens */}
-		  <div className="w3-hide-large sardine-header-margin">
-		  </div>
+                {/* NavBar */}
+                <CityList cities={this.state.cities}
+                          current={currentCity}
+                          useMetroPopulation={this.state.useMetroPopulation}
+                          birminghamPopulation={population}
+                          onCityChanged={(useMetro) => this.handlePopulationChanged(useMetro)}
+                    onClick={(city) => this.handleCityClick(city)}
+                    />
 
-		  <div className="w3-hide-medium w3-hide-small sardine-header">
-		    <h1 className="sardine-h1">If Birmingham Were As Dense As {currentCity || '...'}</h1>
-		{currentCity && <h3 className="sardine-h3">then all {Util.addCommas(population.population)} residents would have to live in this block</h3>}
-		  </div>
+                    {/* Main Content with Header */}
+                    <div className="w3-main sardine-main">
+                        {/* Push content down on small screens */}
+                        <div className="w3-hide-large sardine-header-margin">
+                        </div>
 
-		  <div className="w3-container">
-                    <SMap features={this.state.features} city={currentCity} useMetroPopulation={this.state.useMetroPopulation} />
-                    <Overlay visible={this.state.loading} />
-		  </div>
-		</div>
+                        <div className="w3-hide-medium w3-hide-small sardine-header">
+                            <h1 className="sardine-h1">If Birmingham Were As Dense As {currentCity || '...'}</h1>
+                            {currentCity && <h3 className="sardine-h3">then all {Util.addCommas(population.population)} residents would have to live in this block</h3>}
+                        </div>
+
+                        <div className="w3-container">
+                            <SMap features={this.state.features} city={currentCity} useMetroPopulation={this.state.useMetroPopulation} />
+                            <Overlay visible={this.state.loading} />
+                        </div>
+                    </div>
             </div>
         );
     }

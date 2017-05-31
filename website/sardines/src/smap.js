@@ -1,3 +1,17 @@
+/* -*- Mode: rjsx -*- */
+
+/*******************************************
+ * Copyright (2017)
+ *  Marcus Dillavou <line72@line72.net>
+ *  http://line72.net
+ *
+ * Sardines:
+ *  https://github.com/line72/sardines
+ *  https://sardines.line72.net
+ *
+ * Licensed Under the GPLv3
+ *******************************************/
+
 import React from 'react';
 import { Map, TileLayer, ZoomControl } from 'react-leaflet';
 import Density from './density';
@@ -21,7 +35,7 @@ class SMap extends React.Component {
                 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             }
         }
-        
+
         this.state = {
             center: [33.5084801,-86.8006611],
             zoom: 11,
@@ -33,18 +47,18 @@ class SMap extends React.Component {
         const position = this.state.center;
 
         return (
-	    <div className="map-container">
-              <Map center={position} zoom={this.state.zoom} zoomControl={false}>
-		<ZoomControl position="bottomleft" />
-                <TileLayer
-                  attribution={this.state.tile.attribution}
-                  url={this.state.tile.url}
-                  subdomains={this.state.tile.subdomains}
-                  />
-		<Boundary useMetroPopulation={this.props.useMetroPopulation} />
-                {this.props.features != null && 
-                <Density features={this.props.features} name={this.props.city} useMetroPopulation={this.props.useMetroPopulation} />}
-              </Map>
+            <div className="map-container">
+                <Map center={position} zoom={this.state.zoom} zoomControl={false}>
+                    <ZoomControl position="bottomleft" />
+                    <TileLayer
+                        attribution={this.state.tile.attribution}
+                        url={this.state.tile.url}
+                        subdomains={this.state.tile.subdomains}
+                        />
+                    <Boundary useMetroPopulation={this.props.useMetroPopulation} />
+                    {this.props.features != null &&
+                    <Density features={this.props.features} name={this.props.city} useMetroPopulation={this.props.useMetroPopulation} />}
+                </Map>
             </div>
         );
     }
