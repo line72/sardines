@@ -1,5 +1,6 @@
 /* -*- Mode: rjsx -*- */
 
+
 /*******************************************
  * Copyright (2017)
  *  Marcus Dillavou <line72@line72.net>
@@ -11,13 +12,11 @@
  *
  * Licensed Under the GPLv3
  *******************************************/
+const workerCode = () => {
 
-class Builder {
-    constructor() {
-        this.mapCentroid = [-86.806379, 33.513501];
-    }
+    let mapCentroid = [-86.806379, 33.513501];
 
-    build(geojson, population, density) {
+    let build = (geojson, population, density) => {
         /* In our hex grid, each hex has
          * a radius (and side length) of
          * 0.1km. Using the area equation
@@ -29,7 +28,7 @@ class Builder {
          * hex to be 0.025980762km^2
          */
 
-        const [desired, features] = this.findDesiredFeatures(geojson, population, density);
+        const [desired, features] = findDesiredFeatures(geojson, population, density);
 
         let count = 0;
 
@@ -38,10 +37,10 @@ class Builder {
                 return 1;
             } else if (b.properties.priority == null) {
                 return -1;
-            } else if (a.properties.priority == b.properties.priority) {
+            } else if (a.properties.priority === b.properties.priority) {
                 // prioritize by the one closest to the center
-                let distanceA = this.findDistanceToCenter([a.properties.centroidLongitude, a.properties.centroidLatitude]);
-                let distanceB = this.findDistanceToCenter([b.properties.centroidLongitude, b.properties.centroidLatitude]);
+                let distanceA = findDistanceToCenter([a.properties.centroidLongitude, a.properties.centroidLatitude]);
+                let distanceB = findDistanceToCenter([b.properties.centroidLongitude, b.properties.centroidLatitude]);
                 return distanceA - distanceB;
             } else {
                 return a.properties.priority - b.properties.priority;
@@ -70,7 +69,7 @@ class Builder {
         for (let i in results) {
             let result = results[i];
             for (let j in result["geometry"]["coordinates"][0]) {
-                let coord = this.roundKey(result["geometry"]["coordinates"][0][j]);
+                let coord = roundKey(result["geometry"]["coordinates"][0][j]);
                 if (coord in pointToFeatures) {
                     if (pointToFeatures[coord].indexOf(result) === -1) {
                         pointToFeatures[coord].push(result);
@@ -86,7 +85,7 @@ class Builder {
         let filteredResults = results.filter((r) => {
             for (let i in r["geometry"]["coordinates"][0]) {
                 let c = r["geometry"]["coordinates"][0][i];
-                let key = this.roundKey(c);
+                let key = roundKey(c);
 
                 if (pointToFeatures[key].length <= 2) {
                     // found an edge
@@ -130,7 +129,7 @@ class Builder {
                 // we need to decide if we want to go counter-clockwise, or
                 //  clockwise. Try counter, if the starting point isn't a boundary
                 //  then try clockwise
-                let k = this.roundKey(n["geometry"]["coordinates"][0][startingIndex % 6])
+                let k = roundKey(n["geometry"]["coordinates"][0][startingIndex % 6])
 
                 let start = 0;
                 let end = 0;
@@ -149,7 +148,7 @@ class Builder {
 
                 for (let i = start; i < end; i += inc) {
                     let c = n["geometry"]["coordinates"][0][i % 6];
-                    let key = this.roundKey(c);
+                    let key = roundKey(c);
 
                     if (key === startingKey) {
                         break;
@@ -172,7 +171,7 @@ class Builder {
 
                         boundary.push(c);
                         // find the other polygon to visit
-                        let o = this.getOtherAndOffset(pointToFeatures[key], n, key);
+                        let o = getOtherAndOffset(pointToFeatures[key], n, key);
                         if (o != null) {
                             toVisit.push(o);
                         } else {
@@ -199,7 +198,7 @@ class Builder {
         console.log('filteredResults=' + filteredResults.length);
 
         // generate the GeoJSON geometry based on the boundaries
-        let geoJSON = this.buildGeoJSON(boundaries);
+        let geoJSON = buildGeoJSON(boundaries);
         console.log('geoJSON=' + geoJSON.length);
 
         return geoJSON;
@@ -209,7 +208,7 @@ class Builder {
      * Generate a string key
      * rounding the numbers a little
      */
-    roundKey(point) {
+    let roundKey = (point) => {
         return point[0].toFixed(11) + 'x' + point[1].toFixed(11);
     }
 
@@ -217,9 +216,9 @@ class Builder {
      * calculate the distance between the polygon
      * centroid and our map centroid
      */
-    findDistanceToCenter(centroid) {
-        return Math.sqrt(Math.pow(centroid[0] - this.mapCentroid[0], 2) +
-                         Math.pow(centroid[1] - this.mapCentroid[1], 2));
+    let findDistanceToCenter = (centroid) => {
+        return Math.sqrt(Math.pow(centroid[0] - mapCentroid[0], 2) +
+                         Math.pow(centroid[1] - mapCentroid[1], 2));
     }
 
     /**
@@ -227,12 +226,12 @@ class Builder {
      *  find the index of the matching
      *  coordinate
      */
-    getOtherAndOffset(items, n, key) {
+    let getOtherAndOffset = (items, n, key) => {
         let match = items.find((i) => i !== n);
         if (match) {
             for (let i in match["geometry"]["coordinates"][0]) {
                 let c = match["geometry"]["coordinates"][0][i];
-                let k = this.roundKey(c);
+                let k = roundKey(c);
 
                 if (k === key) {
                     return [match, ++i];
@@ -242,7 +241,7 @@ class Builder {
         return null;
     }
 
-    findDesiredFeatures(geojson, population, density) {
+    let findDesiredFeatures = (geojson, population, density) => {
         // decide if we should use the high res or low-res
         //  version
 
@@ -268,7 +267,7 @@ class Builder {
         return [desired, geojson.low.geoJson.features];
     }
 
-    buildGeoJSON(boundaries) {
+    let buildGeoJSON = (boundaries) => {
         return boundaries.filter((boundary) => {
             // needs to be at least 2 hexes big
             return boundary.length > 10
@@ -284,14 +283,27 @@ class Builder {
                    };
         });
     }
-}
 
-onmessage = function(e) {
-    console.log('building results for ' + e.data.city.name);
-    let builder = new Builder();
-    let results = builder.build(e.data.geojson, e.data.population, e.data.density);
+    let onmessage = (e) => {
+        console.log('building results for ' + e.data.city.name);
+        let results = build(e.data.geojson, e.data.population, e.data.density);
 
-    console.log('finished results for ' + e.data.city.name);
-    postMessage({city: e.data.city,
-                 results: results});
-}
+        console.log('finished results for ' + e.data.city.name);
+        postMessage({city: e.data.city,
+                     results: results});
+    };
+};
+
+// !mwd - hack to inline our WebWorker
+//  since we can't specify different
+//  bundles with the simple
+//  create-react-app script
+// Taken from:
+//  https://github.com/facebookincubator/create-react-app/issues/1277
+let code = workerCode.toString();
+code = code.substring(code.indexOf("{") + 1, code.lastIndexOf("}"));
+
+const blob = new Blob([code], {type: "application/javascript"});
+const BuilderWorker = URL.createObjectURL(blob);
+
+export default BuilderWorker;

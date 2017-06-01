@@ -17,6 +17,7 @@ import SMap from './smap';
 import CityList from './citylist';
 import Overlay from './overlay';
 import Util from './util';
+import BuilderWorker from './builder';
 
 import './App.css';
 import './w3.css';
@@ -142,7 +143,7 @@ class App extends Component {
             this.worker.terminate();
             this.worker = null;
         }
-        this.worker = new Worker("./builder.js");
+        this.worker = new Worker(BuilderWorker);
 
         this.worker.onmessage = (e) =>  {
             console.log('received results for ' + e.data.city.name);
